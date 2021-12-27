@@ -81,7 +81,12 @@ import { fromatTime } from "@/utils";
 import chatHeader from "./components/Header";
 import messageList from "./components/MessageList";
 import { SET_UNREAD_NEWS_TYPE_MAP } from "@/store/constants";
-import { conversationTypes, uploadImgStatusMap, qiniu_URL } from "@/const";
+import {
+  conversationTypes,
+  uploadImgStatusMap,
+  qiniu_URL,
+  server_URL
+} from "@/const";
 import customEmoji from "@/components/customEmoji";
 import upImg from "@/components/customUploadImg";
 import groupDesc from "./components/GroupDesc";
@@ -194,7 +199,38 @@ export default {
         const imgKey = res.data.key;
         let img_URL = "";
         if ((imgKey || "").includes("/uploads/")) {
-          img_URL = process.env.IMG_URL + imgKey;
+          img_URL = server_URL + imgKey;
+        } else {
+          img_URL = qiniu_URL + imgKey;
+        }
+        const common = this.generatorMessageCommon();
+        const newMessage = {
+          ...common,
+          message: img_URL,
+          messageType: "img" // emoji/text/img/file/sys/artboard/audio/video
+        };
+        msgListClone.forEach(item => {
+          if (item.guid === guid) {
+            item.uploading = false;
+            delete item.uploadPercent;
+          }
+        });
+        this.messages = msgListClone;
+        this.$socket.emit("sendNewMessage", newMessage);
+        this.$store.dispatch("news/SET_LAST_NEWS", {
+          type: "edit",
+          res: {
+            roomid: this.currentConversation.roomid,
+            news: newMessage
+          }
+        });
+        this.messageText = "";
+      }
+      if (res.status === uploadImgStatusMap.server_complete) {
+        const imgKey = res.data.key;
+        let img_URL = "";
+        if ((imgKey || "").includes("/uploads/")) {
+          img_URL = server_URL + imgKey;
         } else {
           img_URL = qiniu_URL + imgKey;
         }
@@ -244,9 +280,7 @@ export default {
         }
       });
     },
-    fileInpChange(e) {
-      console.log(e.target.files[0]);
-    },
+    fileInpChange(e) {},
     addEmoji(emoji = "") {
       this.messageText += emoji;
     },

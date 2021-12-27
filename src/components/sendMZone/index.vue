@@ -141,7 +141,7 @@ export default {
         });
         this.pictures = pictures; // 更新图片数组
       }
-      if (res.status === uploadImgStatusMap.complete) {
+      if (res.status === uploadImgStatusMap.server_complete) {
         // 完成
         const IMG_URL = server_URL + res.data.key; // 图片地址
         const guid = res.guid;
@@ -155,7 +155,7 @@ export default {
         });
         this.pictures = pictures;
       }
-      if (res.status === uploadImgStatusMap.qiniu_complete) {
+      if (res.status === uploadImgStatusMap.complete) {
         // 完成
         const IMG_URL = qiniu_URL + res.data.key; // 图片地址
         const guid = res.guid;
@@ -167,7 +167,7 @@ export default {
             delete item.uploadPercent; // 删除上传进度
           }
         });
-        this.pictures = pictures;
+        this.pictures = pictures; // 更新图片数组
       }
     },
     cancel() {

@@ -90,7 +90,7 @@ export default {
       const complete = res => {
         // 上传完成
         this.getStatus({
-          status: uploadImgStatusMap.qiniu_complete, // 上传完成
+          status: uploadImgStatusMap.complete, // 上传完成
           data: res,
           guid
         });
@@ -117,7 +117,7 @@ export default {
         // 判断是否为生产环境
         return this.$message.error("为减少服务器压力线上请上传至七牛云哟~");
       }
-      const IMG_URL = qiniu_URL; // 图片上传地址
+      const IMG_URL = server_URL; // 图片上传地址
       const guid = genGuid(); // 生成guid
       const [file] = e.target.files; // 获取文件
       typeof this.getLocalUrl === "function" && this.createObjetURL(file, guid); // 创建图片的URL
@@ -133,7 +133,7 @@ export default {
           // 判断是否上传成功
           this.getStatus({
             // 获取上传状态
-            status: uploadImgStatusMap.complete,
+            status: uploadImgStatusMap.server_complete,
             data: { key: data.data },
             guid
           });

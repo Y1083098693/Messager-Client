@@ -31,10 +31,9 @@ npm run dev
 
 ## 技术路线
 
-> 本系统分为`Client`，`Server`，`Admin`三个端：其中`Client`为客户端，`Server`为服务器端，`Admin`为管理员端。使用前后端分离的开发模式
+> 本系统分为`Client`，`Server`，两个端：其中`Client`为客户端，`Server`为服务器端。使用前后端分离的开发模式
 
 - 客户端使用`Vue`、`VueX`、`Vue-Router`；
-- 管理员端使用`React`、`antd`；
 - 后端使用的是`node.js`；
 - 数据库使用的是`MongoDB`；
 - 在实现聊天的全双工数据通信使用的是`WebSocket`、`socket.io`。

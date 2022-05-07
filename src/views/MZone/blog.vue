@@ -39,34 +39,34 @@
 </template>
 
 <script>
-import { formatDateToZH } from '@/utils'
+import { formatDateToZH } from "@/utils";
 export default {
   data() {
     return {
       blogList: []
-    }
+    };
   },
   methods: {
     async getBlogList() {
-      const { data } = await this.$http.getBlogList()
+      const { data } = await this.$http.getBlogList();
       if (data.status === 2000) {
-        this.blogList = data.data
+        this.blogList = data.data;
       }
     }
   },
   filters: {
     formatDateToZH(val) {
-      return formatDateToZH(val)
+      return formatDateToZH(val);
     }
   },
   mounted() {
-    this.getBlogList()
-  },
-}
+    this.getBlogList();
+  }
+};
 </script>
 
 <style lang="scss">
-@import './../../../static/css/var.scss';
+@import "./../../../static/css/var.scss";
 .mzone-blog {
   background-color: $primarybg;
   padding: 10px;
@@ -78,7 +78,7 @@ export default {
         padding: 10px;
         border-bottom: 1px solid #f2f2f2;
         &:first-child {
-          border-top: 1px solid #f2f2f2;          
+          border-top: 1px solid #f2f2f2;
         }
         .blog-content {
           flex: 1;
@@ -90,7 +90,7 @@ export default {
             font-size: 12px;
             .meta-item {
               &::after {
-                content: '·';
+                content: "·";
                 margin: 0 4px;
               }
               &:last-child {

@@ -322,7 +322,7 @@ export default {
       color: #333;
       border-radius: 5px;
       padding: 0;
-      opacity: 0.8;
+      opacity: 1;
       /*针对移动端做特殊处理*/
       &.mobile {
         left: 0;

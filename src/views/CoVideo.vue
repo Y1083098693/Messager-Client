@@ -71,15 +71,19 @@ export default {
     //     })
     // },
     '1v1answer'(data) {
+      // 对方的 answer
       this.onAnswer(data)
     },
     '1v1offer'(data) {
+      // 对方的 offer
       this.onOffer(data)
     },
     '1v1ICE'(data) {
+      // 对方的 ICE
       this.onIce(data)
     },
     '1v1hangup'(data) {
+      // 对方的 hangup
       this.localstream.getTracks().forEach(function (track) {
         track.stop()
       })

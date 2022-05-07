@@ -31,7 +31,7 @@ export const validateNewsTips = {
 };
 
 export const server_URL = "http://localhost:3333/";
-export const qiniu_URL = "http://blog.static.chenr.cn/"; // 七牛云存储地址
+export const qiniu_URL = "http://hzyi1.cn/"; // 七牛云存储地址
 
 // 七牛云上传图片时的状态
 export const uploadImgStatusMap = {

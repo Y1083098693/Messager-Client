@@ -34,58 +34,58 @@
 </template>
 
 <script>
-import marked from '@/plugins/marked'
-import { debounce, formatDateToZH, LocalStorageManager } from '@/utils'
-import avatarHeader from '@/components/avatarHeader'
-import partTitle from '@/components/partTitle'
-const localStorageManager = new LocalStorageManager()
+import marked from "@/plugins/marked";
+import { debounce, formatDateToZH, LocalStorageManager } from "@/utils";
+import avatarHeader from "@/components/avatarHeader";
+import partTitle from "@/components/partTitle";
+const localStorageManager = new LocalStorageManager();
 export default {
-  name: 'BlogInfo',
+  name: "BlogInfo",
   data() {
     return {
       IMG_URL: process.env.IMG_URL,
       isFetching: true,
-      id: '',
+      id: "",
       blogInfo: {},
       authorInfo: {},
       pageScrollTop: 0,
-      pageDOM: ''
-    }
+      pageDOM: ""
+    };
   },
   computed: {
     content() {
-      return marked(this.blogInfo.content, false, true).html
+      return marked(this.blogInfo.content, false, true).html;
     },
     device() {
-      return this.$store.state.device.deviceType
+      return this.$store.state.device.deviceType;
     }
   },
   methods: {
     setAuthorInfo(info) {
       for (const key in info) {
         if (info.hasOwnProperty(key)) {
-          this.$set(this.authorInfo, key, info[key])
+          this.$set(this.authorInfo, key, info[key]);
         }
       }
     },
     async getBlogInfo() {
-      this.isFetching = true
-      const { data } = await this.$http.getBlogInfo(this.id)
+      this.isFetching = true;
+      const { data } = await this.$http.getBlogInfo(this.id);
       if (data.status === 2000) {
-        this.blogInfo = data.data
-        this.setAuthorInfo(data.data.authorId)
+        this.blogInfo = data.data;
+        this.setAuthorInfo(data.data.authorId);
       }
-      this.isFetching = false
+      this.isFetching = false;
     },
-    handlerScroll: debounce(function (e) {
-      const scrollTop = e.target.scrollTop
-      this.pageScrollTop = scrollTop
-      localStorageManager.set(`blog-acrticle-${this.id}`, scrollTop)
+    handlerScroll: debounce(function(e) {
+      const scrollTop = e.target.scrollTop;
+      this.pageScrollTop = scrollTop;
+      localStorageManager.set(`blog-acrticle-${this.id}`, scrollTop);
     }, 500)
   },
   filters: {
     formatDateToZH(val) {
-      return formatDateToZH(val)
+      return formatDateToZH(val);
     }
   },
   components: {
@@ -96,32 +96,34 @@ export default {
     blogInfo: {
       handler(val) {
         this.$nextTick(() => {
-          const scrollTop = localStorageManager.getStr(`blog-acrticle-${this.id}`)
-          document.querySelector('.blog-info-page').scrollTop = scrollTop
-        })
+          const scrollTop = localStorageManager.getStr(
+            `blog-acrticle-${this.id}`
+          );
+          document.querySelector(".blog-info-page").scrollTop = scrollTop;
+        });
       }
     }
   },
   created() {
-    const id = this.$route.params.id
-    this.id = id
-    this.getBlogInfo()
+    const id = this.$route.params.id;
+    this.id = id;
+    this.getBlogInfo();
   },
   mounted() {
-    const pageDOM = document.querySelector('.blog-info-page')
-    pageDOM.addEventListener('scroll', this.handlerScroll)
-    this.pageDOM = pageDOM
+    const pageDOM = document.querySelector(".blog-info-page");
+    pageDOM.addEventListener("scroll", this.handlerScroll);
+    this.pageDOM = pageDOM;
   },
   beforeDestroy() {
-    this.pageDOM.removeEventListener('scroll', this.handlerScroll)
-  },
-}
+    this.pageDOM.removeEventListener("scroll", this.handlerScroll);
+  }
+};
 </script>
 
 <style lang="scss">
-@import './../../static/css/animation.scss';
-@import './../../static/css/markdown.css';
-@import './../../static/css/var.scss';
+@import "./../../static/css/animation.scss";
+@import "./../../static/css/markdown.css";
+@import "./../../static/css/var.scss";
 .blog-info-page {
   position: relative;
   height: 100%;
@@ -160,14 +162,14 @@ export default {
       position: absolute;
       right: 5px;
       width: 20px;
-      transition: all .5s;
+      transition: all 0.5s;
       font-size: 20px;
       .item {
         font-size: 20px;
       }
       &.mobile {
         position: fixed;
-        bottom:-1px;
+        bottom: -1px;
         width: 100%;
         flex-direction: row;
         padding: 5px 20px;

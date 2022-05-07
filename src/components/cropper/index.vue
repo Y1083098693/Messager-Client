@@ -1,6 +1,6 @@
 <template>
   <div class="vchat-crop-box">
-    <div class="vchat-crop-container"> // 图片裁剪容器
+    <div class="vchat-crop-container">
       <div class="vchat-crop-left">
         <img :src="url" ref="avatar-image">
       </div>

@@ -13,9 +13,10 @@ module.exports = {
       "/api": {
         target: "http://localhost:3333",
         changeOrigin: true
-        // pathRewrite: {
-        //   '^/api': ''
-        // }
+      },
+      "/socket": {
+        target: "http://www.hzyi1.cn",
+        changeOrigin: true
       }
     },
 
@@ -44,12 +45,12 @@ module.exports = {
 
   build: {
     // Template for index.html
-    // index: path.resolve(__dirname, '../dist/index.html'),
-    index: path.resolve(__dirname, "../chatServer/index.html"),
+    index: path.resolve(__dirname, "../dist/index.html"),
+    // index: path.resolve(__dirname, "../chatServer/index.html"),
 
     // Paths
-    // assetsRoot: path.resolve(__dirname, '../dist'),
-    assetsRoot: path.resolve(__dirname, "../chatServer/public"),
+    assetsRoot: path.resolve(__dirname, "../dist"),
+    // assetsRoot: path.resolve(__dirname, "../chatServer/public"),
     assetsSubDirectory: "static",
     assetsPublicPath: "./",
 

@@ -17,6 +17,7 @@
         :key="index"
         :messageitem="item"
         :img-type-msg-list="imgTypeMsgList"
+        :file-type-msg-list="fileTypeMsgList"
         :currentConversation="currentConversation"
         :last-enter-time="lastEnterTime"
         :set-last-enter-time="setLastEnterTime"
@@ -67,6 +68,11 @@ export default {
     imgTypeMsgList() {
       return (this.messagelist || []).filter(
         item => item.messageType === "img"
+      );
+    },
+    fileTypeMsgList() {
+      return (this.messagelist || []).filter(
+        item => item.messageType === "file"
       );
     }
   },

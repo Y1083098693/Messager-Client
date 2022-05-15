@@ -40,6 +40,10 @@
                 type="file"
                 title="选择文件"
                 @change="fileInpChange"
+                @getStatus="getFileUploadResult"
+                @getLocalUrl="getFileLocalUrl"
+                :get-Status="getFileUploadResult"
+                :get-Local-Url="getFileLocalUrl"
               >
             </i>
           </el-tooltip>
@@ -77,7 +81,7 @@
 <script>
 import { mapState } from "vuex";
 import { cloneDeep } from "lodash";
-import { fromatTime } from "@/utils";
+import { genGuid } from "@/utils";
 import chatHeader from "./components/Header";
 import messageList from "./components/MessageList";
 import { SET_UNREAD_NEWS_TYPE_MAP } from "@/store/constants";
@@ -117,7 +121,12 @@ export default {
       datetamp: Date.now() // 切换群聊重新强制加载群聊详情
     };
   },
+  methods: {},
   computed: {
+    createObjetURL(file, guid) {
+      const url = window.URL.createObjectURL(file); // 创建图片的URL
+      this.getFileLocalUrl(url, guid); // 获取图片的本地URL
+    },
     ...mapState("user", {
       userInfo: "userInfo"
     }),
@@ -172,6 +181,7 @@ export default {
         currentConversation: this.currentConversation
       };
     },
+    // 获取图片上传进程
     getImgUploadResult(res) {
       const { guid } = res; // 图片的唯一标识
       const msgListClone = cloneDeep(this.messages);
@@ -196,17 +206,17 @@ export default {
         return;
       }
       if (res.status === uploadImgStatusMap.complete) {
-        const imgKey = res.data.key;
-        let img_URL = "";
-        if ((imgKey || "").includes("/uploads/")) {
-          img_URL = server_URL + imgKey;
+        const Key = res.data.key;
+        let URL = "";
+        if ((Key || "").includes("/uploads/")) {
+          URL = server_URL + Key;
         } else {
-          img_URL = qiniu_URL + imgKey;
+          URL = qiniu_URL + Key;
         }
         const common = this.generatorMessageCommon();
         const newMessage = {
           ...common,
-          message: img_URL,
+          message: URL,
           messageType: "img" // emoji/text/img/file/sys/artboard/audio/video
         };
         msgListClone.forEach(item => {
@@ -258,6 +268,94 @@ export default {
         this.messageText = "";
       }
     },
+    // 获取文件上传进程
+    getFileUploadResult(res) {
+      const { guid } = res; // 文件的唯一标识
+      const msgListClone = cloneDeep(this.messages);
+      if (res.status === uploadImgStatusMap.error) {
+        this.$message.error("文件上传失败！");
+        return;
+      }
+      if (res.status === uploadImgStatusMap.next) {
+        const percent = Number(
+          (res.data && res.data.total && res.data.total.percent) || 0
+        ).toFixed(2);
+        const loaded =
+          (res.data && res.data.total && res.data.total.loaded) || 0;
+        const size = (res.data && res.data.total && res.data.total.size) || 0;
+        console.log(`文件大小：${size}，已上传：${loaded}，百分比：${percent}`);
+        msgListClone.forEach(item => {
+          if (item.guid === guid) {
+            item.uploadPercent = Number(percent);
+          }
+        });
+        this.messages = msgListClone;
+        return;
+      }
+      if (res.status === uploadImgStatusMap.complete) {
+        const fileKey = res.data.key;
+        let fileURL = "";
+        if ((fileKey || "").includes("/uploads/")) {
+          fileURL = server_URL + fileKey;
+        } else {
+          fileURL = qiniu_URL + fileKey;
+        }
+        const common = this.generatorMessageCommon();
+        const newMessage = {
+          ...common,
+          message: fileURL,
+          messageType: "file" // emoji/text/img/file/sys/artboard/audio/video
+        };
+        msgListClone.forEach(item => {
+          if (item.guid === guid) {
+            item.uploading = false;
+            delete item.uploadPercent;
+          }
+        });
+        this.messages = msgListClone;
+        this.$socket.emit("sendNewMessage", newMessage);
+        this.$store.dispatch("news/SET_LAST_NEWS", {
+          type: "edit",
+          res: {
+            roomid: this.currentConversation.roomid,
+            news: newMessage
+          }
+        });
+        this.messageText = "";
+      }
+      if (res.status === uploadImgStatusMap.server_complete) {
+        const fileKey = res.data.key;
+        let file_URL = "";
+        if ((fileKey || "").includes("/uploads/")) {
+          file_URL = server_URL + fileKey;
+        } else {
+          file_URL = qiniu_URL + fileKey;
+        }
+        const common = this.generatorMessageCommon();
+        const newMessage = {
+          ...common,
+          message: file_URL,
+          messageType: "file" // emoji/text/img/file/sys/artboard/audio/video
+        };
+        msgListClone.forEach(item => {
+          if (item.guid === guid) {
+            item.uploading = false;
+            delete item.uploadPercent;
+          }
+        });
+        this.messages = msgListClone;
+        this.$socket.emit("sendNewMessage", newMessage);
+        this.$store.dispatch("news/SET_LAST_NEWS", {
+          type: "edit",
+          res: {
+            roomid: this.currentConversation.roomid,
+            news: newMessage
+          }
+        });
+        this.messageText = "";
+      }
+    },
+
     /**
      * 直接获取本地的地址
      */
@@ -280,7 +378,73 @@ export default {
         }
       });
     },
-    fileInpChange(e) {},
+    getFileLocalUrl(url, guid) {
+      const common = this.generatorMessageCommon();
+      const newMessage = {
+        ...common,
+        uploading: true,
+        guid,
+        message: url,
+        messageType: "file"
+      };
+      this.messages = [...this.messages, newMessage];
+      this.$store.dispatch("news/SET_LAST_NEWS", {
+        type: "edit",
+        res: {
+          roomid: this.currentConversation.roomid,
+          news: newMessage
+        }
+      });
+    },
+    fileInpChange(e) {
+      const guid = genGuid(); // 生成guid
+      const [file] = e.target.files; // 获取文件
+      typeof this.getFileLocalUrl === "function" &&
+        this.getFileLocalUrl(URL.createObjectURL(file), guid);
+      const fileType = file.type && file.type.split("/")[1]; // 获取文件类型
+      // 截取文件后缀名并且重命名
+      const fileName = file.name.split(".")[0] + "." + fileType;
+      const formdata = new FormData(); // 创建formdata
+      formdata.append("file", file); // 添加文件
+      formdata.append("fileName", fileName); // 添加文件名
+      this.$http.uploadFile(formdata).then(res => {
+        console.log("上传文件结果", res); // 打印结果
+        const { data } = res; // 获取数据
+        if (data.status === 200) {
+          // 判断是否上传成功
+          this.getStatus({
+            // 获取上传状态
+            status: uploadImgStatusMap.server_complete,
+            data: { key: data.data },
+            guid
+          });
+        } else {
+          console.log(res);
+        }
+        const common = this.generatorMessageCommon();
+        const newMessage = {
+          ...common,
+          message: fileName,
+          messageType: "file" // emoji/text/img/file/sys/artboard/audio/video
+        };
+        // msgListClone.forEach(item => {
+        //   if (item.guid === guid) {
+        //     item.uploading = false;
+        //     delete item.uploadPercent;
+        //   }
+        // });
+        // this.messages = msgListClone;
+        this.$socket.emit("sendNewMessage", newMessage);
+        this.$store.dispatch("news/SET_LAST_NEWS", {
+          type: "edit",
+          res: {
+            roomid: this.currentConversation.roomid,
+            news: newMessage
+          }
+        });
+        this.messageText = "";
+      });
+    },
     addEmoji(emoji = "") {
       this.messageText += emoji;
     },
@@ -306,9 +470,11 @@ export default {
       });
       this.messageText = "";
     },
+    // 发送图片
     joinChatRoom() {
       this.$socket.emit("join", this.currentConversation);
     },
+    // 发送消息
     async getRecentNews(init = true) {
       /**
        * getRecentNews分为两种目前分为两种情况：1.获取两两好友之间的；2.获取群聊的

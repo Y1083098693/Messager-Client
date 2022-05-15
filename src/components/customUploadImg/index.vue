@@ -122,9 +122,11 @@ export default {
       const [file] = e.target.files; // 获取文件
       typeof this.getLocalUrl === "function" && this.createObjetURL(file, guid); // 创建图片的URL
       const fileType = file.type && file.type.split("/")[1]; // 获取文件类型
+      const fileName = file.name.split(".")[0] + "." + fileType;
       const fileSize = file.size / 1024 / 1024; // 获取文件大小
       const formdata = new FormData(); // 创建formdata
       formdata.append("file", file); // 添加文件
+      formdata.append("fileName", fileName); // 添加文件名
       this.$http.uploadFile(formdata).then(res => {
         // 上传图片
         console.log("上传文件结果", res); // 打印结果

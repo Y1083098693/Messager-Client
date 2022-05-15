@@ -42,6 +42,7 @@
             :is="messageTypesCmp[messageitem.messageType+'cmp']"
             :message="messageitem"
             :img-type-msg-list="imgTypeMsgList"
+            :file-type-msg-list="fileTypeMsgList"
           />
           <el-tooltip class="item" effect="dark" :content="isAllRead ? '已读' : '未读'" placement="top">
             <i
@@ -66,7 +67,8 @@ export default {
     "imgTypeMsgList",
     "currentConversation",
     "lastEnterTime",
-    "setLastEnterTime"
+    "setLastEnterTime",
+    "fileTypeMsgList"
   ],
   data() {
     return {
@@ -81,12 +83,15 @@ export default {
     ...mapState("user", {
       userInfo: "userInfo"
     }),
+    // 消息类型
     contentClassName() {
       let res = "";
       if (this.messageitem.messageType === "sys") {
         res = "sys-content";
       } else if (this.messageitem.messageType === "img") {
         res = "img-content";
+      } else if (this.messageitem.messageType === "file") {
+        res = "file-content";
       } else {
         res =
           this.messageitem.senderId === this.userInfo._id
@@ -227,6 +232,25 @@ export default {
     }
     &.mobile {
       .img-content {
+        overflow: hidden;
+      }
+    }
+    .file-content {
+      position: relative;
+      margin-top: 5px;
+      display: inline-block;
+      width: 100%;
+      .message-wrapper {
+        position: relative;
+        height: 50px;
+        // width: 100%;
+        .is-read {
+          @extend .is-read-style;
+        }
+      }
+    }
+    &.mobile {
+      .file-content {
         overflow: hidden;
       }
     }

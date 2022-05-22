@@ -48,6 +48,23 @@
             </i>
           </el-tooltip>
         </label>
+        <!-- <label for="upvideo">
+          <el-tooltip class="item" effect="dark" content="只能上传小于 2M 的视频" placement="top">
+            <i class="item el-icon-video">
+              <input
+                id="upvideo"
+                class="file-inp upload"
+                type="file"
+                title="选择视频"
+                @change="videoInpChange"
+                @getStatus="getVideoUploadResult"
+                @getLocalUrl="getVideoLocalUrl"
+                :get-Status="getVideoUploadResult"
+                :get-Local-Url="getVideoLocalUrl"
+              >
+            </i>
+          </el-tooltip>
+        </label> -->
         <span
           :class="showHistoryMsg ? 'history-btn normal-font el-icon-caret-bottom' : 'history-btn normal-font el-icon-caret-top'"
           @click="setShowHistoryMsg">历史记录</span>
@@ -402,11 +419,11 @@ export default {
       typeof this.getFileLocalUrl === "function" &&
         this.getFileLocalUrl(URL.createObjectURL(file), guid);
       const fileType = file.type && file.type.split("/")[1]; // 获取文件类型
+      // 截取文件后缀名
       // 截取文件后缀名并且重命名
       const fileName = file.name.split(".")[0] + "." + fileType;
       const formdata = new FormData(); // 创建formdata
-      formdata.append("file", file); // 添加文件
-      formdata.append("fileName", fileName); // 添加文件名
+      formdata.append("file", file); // 添加文件// 添加文件名
       this.$http.uploadFile(formdata).then(res => {
         console.log("上传文件结果", res); // 打印结果
         const { data } = res; // 获取数据
@@ -427,13 +444,6 @@ export default {
           message: fileName,
           messageType: "file" // emoji/text/img/file/sys/artboard/audio/video
         };
-        // msgListClone.forEach(item => {
-        //   if (item.guid === guid) {
-        //     item.uploading = false;
-        //     delete item.uploadPercent;
-        //   }
-        // });
-        // this.messages = msgListClone;
         this.$socket.emit("sendNewMessage", newMessage);
         this.$store.dispatch("news/SET_LAST_NEWS", {
           type: "edit",

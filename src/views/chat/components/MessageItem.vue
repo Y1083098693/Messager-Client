@@ -90,8 +90,6 @@ export default {
         res = "sys-content";
       } else if (this.messageitem.messageType === "img") {
         res = "img-content";
-      } else if (this.messageitem.messageType === "file") {
-        res = "file-content";
       } else {
         res =
           this.messageitem.senderId === this.userInfo._id
@@ -100,6 +98,7 @@ export default {
       }
       return res;
     },
+    // 消息类型
     messageItemComStyle() {
       let res = {};
       if (this.messageitem.messageType === "sys") {
@@ -115,6 +114,7 @@ export default {
       }
       return res;
     },
+    // 消息类型
     messageWraperStyle() {
       // 发送消息时间
       let res = {}; // 消息外层样式

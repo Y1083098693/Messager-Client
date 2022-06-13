@@ -450,3 +450,11 @@ export function computedLevel(onlineTime) {
   const res = Math.ceil(toHour);
   return res > 8 ? 8 : res;
 }
+
+/**
+ * 判断文件类型
+ */
+export function getFileType (file) {
+  const fileType = file.type && file.type.split("/")[1];
+  return fileType;
+}

@@ -1,3 +1,6 @@
+/**
+ *  这里负责把指令挂载到元素上
+ **/
 import { Message } from 'element-ui'
 const IMG_URL = process.env.IMG_URL
 export default {

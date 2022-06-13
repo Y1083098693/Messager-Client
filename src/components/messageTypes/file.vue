@@ -24,7 +24,6 @@
       <i class="el-icon-success"></i>
       </div>
     </span>
-    <!-- <span>{{message.message}}</span> -->
   </div>
 </template>
 

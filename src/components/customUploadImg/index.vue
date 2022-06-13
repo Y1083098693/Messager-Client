@@ -126,7 +126,6 @@ export default {
       const fileSize = file.size / 1024 / 1024; // 获取文件大小
       const formdata = new FormData(); // 创建formdata
       formdata.append("file", file); // 添加文件
-      formdata.append("fileName", fileName); // 添加文件名
       this.$http.uploadFile(formdata).then(res => {
         // 上传图片
         console.log("上传文件结果", res); // 打印结果

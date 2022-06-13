@@ -166,6 +166,7 @@ export default {
       const onlineUserIdArr = Object.values(data).map(item => item._id);
       this.$store.dispatch("app/SET_ONLINE_USER", onlineUserIdArr);
     },
+    //接收到消息
     receiveMessage(news) {
       this.$refs["audio"].play();
       console.log("收到新消息", news);
@@ -175,11 +176,13 @@ export default {
         message,
         type: "success"
       });
+      // 如果是群消息，则更新群消息列表
       this.$store.dispatch("news/SET_UNREAD_NEWS", {
         roomid: news.roomid,
         count: 1,
         type: "ADD"
       });
+      // 如果是私聊消息，则更新私聊消息列表
       const senderConversation = this.allConversation.find(
         item => item.roomid === news.roomid
       );
@@ -196,6 +199,7 @@ export default {
       });
       saveRecentConversationToLocal(news.senderId);
     },
+    // 接收到离线消息
     receiveValidateMessage(news) {
       this.$refs["audio"].play();
       console.log("收到新的验证消息", news);

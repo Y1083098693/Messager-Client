@@ -419,11 +419,10 @@ export default {
       typeof this.getFileLocalUrl === "function" &&
         this.getFileLocalUrl(URL.createObjectURL(file), guid);
       const fileType = file.type && file.type.split("/")[1]; // 获取文件类型
-      // 截取文件后缀名
       // 截取文件后缀名并且重命名
       const fileName = file.name.split(".")[0] + "." + fileType;
       const formdata = new FormData(); // 创建formdata
-      formdata.append("file", file); // 添加文件// 添加文件名
+      formdata.append("file", file); // 添加文件
       this.$http.uploadFile(formdata).then(res => {
         console.log("上传文件结果", res); // 打印结果
         const { data } = res; // 获取数据

@@ -1,3 +1,7 @@
+/**
+ * 这里负责把常量放到一个单独的文件中，方便维护
+ **/
+
 export const conversationTypes = {
   friend: "FRIEND",
   group: "GROUP"
@@ -54,6 +58,7 @@ export const coArtBoardHandleOption = [
   { name: "颜色", type: "color" }
 ];
 
+// 在CoArtBoard组件中对调色板的操作
 export const coArtBoardReplyTypes = {
   agree: "agree",
   disagree: "disagree",
@@ -76,6 +81,7 @@ export const weekNumZHMap = {
   "5": "星期五",
   "6": "星期六"
 };
+
 
 export const commentTips = "行车不规范，亲友两行泪";
 
